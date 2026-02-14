@@ -1,0 +1,5 @@
+{
+  "name": "ArgenBiz SaaS - Sistema de Gestión Integral",
+  "description": "Plataforma administrativa y contable diseñada específicamente para el mercado argentino, con soporte multi-tenant, gestión de IVA, CUIT y reportes financieros avanzados.",
+  "requestFramePermissions": []
+}
