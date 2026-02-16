@@ -39,6 +39,20 @@ const App: React.FC = () => {
     return () => subscription.unsubscribe();
   }, []);
 
+  // MODO DEMO PÚBLICO: Bypass de Auth
+  // Si no hay sesión real, simulamos una para que la UI cargue
+  useEffect(() => {
+    if (!loading && !session) {
+      console.log("Modo Demo Público: Activando sesión simulada...");
+      setTenantInfo({
+        id: 'demo-tenant-id',
+        name: 'Empresa Demo S.A.',
+        cuit: '30-11223344-5',
+        type: 'Responsable Inscripto'
+      });
+    }
+  }, [loading, session]);
+
   const initializeUser = async (user: any) => {
     try {
       setInitError(null);
@@ -119,6 +133,19 @@ const App: React.FC = () => {
       alert("Espera a que se inicialice tu perfil...");
       return;
     }
+
+    // MODO DEMO: Simular carga
+    if (tenantInfo.id === 'demo-tenant-id') {
+      setIsSeeding(true);
+      setTimeout(() => {
+        playSound.success();
+        alert("¡Sistema poblado (Simulación)! En modo público los datos son volátiles.");
+        setIsSeeding(false);
+        // window.location.reload(); // No recargar para no perder el estado fake
+      }, 1500);
+      return;
+    }
+
     setIsSeeding(true);
     playSound.click();
 
@@ -226,7 +253,7 @@ const App: React.FC = () => {
     );
   }
 
-  if (!session) return <Auth />;
+  // if (!session) return <Auth />; // BYPASS AUTH FOR DEMO
 
   const renderContent = () => {
     switch (activeTab) {

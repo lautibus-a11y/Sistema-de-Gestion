@@ -17,7 +17,15 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, tena
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user);
+      if (user) {
+        setUser(user);
+      } else {
+        // MODO DEMO: Usuario Ficticio para evitar crash en UI
+        setUser({
+          email: 'demo@argenbiz.com',
+          user_metadata: { full_name: 'Usuario Invitado' }
+        });
+      }
     });
   }, []);
 
@@ -36,9 +44,11 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, tena
     { id: 'dashboard', label: 'Inicio', icon: Icons.Dashboard },
     { id: 'sales', label: 'Ventas', icon: Icons.Sales },
     { id: 'stock', label: 'Stock', icon: Icons.Stock },
-    { id: 'bookings', label: 'Agenda', icon: () => (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-    )},
+    {
+      id: 'bookings', label: 'Agenda', icon: () => (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+      )
+    },
     { id: 'clients', label: 'Clientes', icon: Icons.Clients },
     { id: 'settings', label: 'Empresa', icon: Icons.Settings },
   ];
@@ -64,11 +74,10 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, tena
               <button
                 key={item.id}
                 onClick={() => handleNav(item.id)}
-                className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 ${
-                  activeTab === item.id 
-                    ? 'bg-sky-500 text-white shadow-xl shadow-sky-500/20' 
-                    : 'text-slate-400 hover:text-white hover:bg-white/5'
-                }`}
+                className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 ${activeTab === item.id
+                  ? 'bg-sky-500 text-white shadow-xl shadow-sky-500/20'
+                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  }`}
               >
                 <item.icon />
                 <span className="font-bold text-sm tracking-tight">{item.label}</span>
@@ -77,18 +86,18 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, tena
           </nav>
 
           <div className="pt-8 border-t border-white/5">
-             <div className="bg-white/5 rounded-[32px] p-5">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-sky-400 font-black">
-                    {user?.email?.[0].toUpperCase()}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xs font-black truncate">{user?.user_metadata?.full_name || 'Admin'}</p>
-                    <p className="text-[9px] text-slate-500 font-bold uppercase truncate">{user?.email}</p>
-                  </div>
+            <div className="bg-white/5 rounded-[32px] p-5">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-sky-400 font-black">
+                  {(user?.email || 'Demo')?.[0]?.toUpperCase()}
                 </div>
-                <button onClick={handleLogout} className="w-full py-3 bg-rose-500/10 text-rose-400 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-500 hover:text-white transition-all">Desconectar</button>
-             </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-black truncate">{user?.user_metadata?.full_name || 'Admin'}</p>
+                  <p className="text-[9px] text-slate-500 font-bold uppercase truncate">{user?.email}</p>
+                </div>
+              </div>
+              <button onClick={handleLogout} className="w-full py-3 bg-rose-500/10 text-rose-400 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-500 hover:text-white transition-all">Desconectar</button>
+            </div>
           </div>
         </div>
       </aside>
